@@ -19,7 +19,7 @@ class TestSequenceFunctions(unittest.TestCase):
         self.input_token_literal = "3" 
         self.categorized_literal = {'type': 'literal', 'value': '3'}
         
-        self.input_token_indentifier = "lambda"
+        self.input_token_identifier = "lambda"
         self.categorized_identifier = {'type': 'identifier', 'value': "lambda"}
         
         
@@ -27,7 +27,7 @@ class TestSequenceFunctions(unittest.TestCase):
         self.assertEqual(self.tokenized, parser.tokenize(self.input_string))
 
     def test_simple_parenthesize(self):
-        self.assertEqual(self.parenthesize, parser.parenthesized(parser.tokenize(self.input_string)))
+        self.assertEqual(self.parenthesized, parser.parenthesize(parser.tokenize(self.input_string)))
     
     def test_literal_categorize(self):
         self.assertEquals(self.categorized_literal, parser.categorize(self.input_token_literal))

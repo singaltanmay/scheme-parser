@@ -3,6 +3,10 @@
 #
 #
 
+import logging
+
+logging.basicConfig(filename='schemeling.log', level=logging.DEBUG)
+
 def tokenize(string):
     """
     Returns a list containing each individual character of a string.
@@ -15,15 +19,29 @@ def tokenize(string):
     
     return string
 
-def parenthesize(tokens):
+def parenthesize(tokens, array=[]):
     """
     Returns a nested array where each '(' starts a new dict and each
     character is labeled by type and value
     
     tokens --> an array of characters from tokenize()
     """
-    #Use a stack to go through the input array and make the output array of lists and dicts
-    pass
+    current_token = tokens.pop(0)
+
+    if current_token == '(':
+        array.append(parenthesize(tokens, []))
+    elif current_token == ')':
+        return array
+    
+    else:
+        array.append(categorize(current_token))
+        parenthesize(tokens, array)
+        logging.debug("Tokens: %s\nArray> %s\nCurrent Token: %s\n----" % (tokens, array, current_token))
+        
+        
+    return array
+    
+    
     
 def categorize(token):
     """
@@ -31,7 +49,13 @@ def categorize(token):
     
     token --> a single, non-parenthesis, token from the array passed to parenthesize()
     """
-    pass
+    identifiers_list = ['lambda', '+', '-', '/', '*']
+    
+    if token in identifiers_list:
+        return {'type':'identifier', 'value':token}
+    
+    else:
+        return {'type':'literal', 'value':token}
     
 def parse(lisp_string):
     """
@@ -39,3 +63,5 @@ def parse(lisp_string):
     """
     return parenthesize(tokenize(lisp_string))
     
+if __name__ == "__main__":
+    print parenthesize(tokenize("()"))
