@@ -1,4 +1,4 @@
-# Parser for the lis.py Interpreter
+# Parser for the Schemeling Interpreter
 #
 #
 #
@@ -9,7 +9,11 @@ def tokenize(string):
     
     string --> a string of Lisp code
     """
-    pass
+    string = string.replace("(", " ( ")
+    string = string.replace(")", " ) ")
+    string = string.split()
+    
+    return string
 
 def parenthesize(tokens):
     """
