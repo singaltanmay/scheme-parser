@@ -10,7 +10,7 @@ class TestSequenceFunctions(unittest.TestCase):
     def setUp(self):
         self.input_string = "(+ 3 (+ 4 5))"
         self.tokenized = ['(', '+', '3', '(', '+', '4', '5', ')', ')']
-        self.parenthesized = [{'type': 'identifier', 'value': '+'}, 
+        self.parsed = [{'type': 'identifier', 'value': '+'}, 
                               {'type': 'literal', 'value': '3'}, [ 
                               {'type': 'identifier', 'value': '+'}, 
                               {'type': 'literal', 'value': '4'},
@@ -25,9 +25,6 @@ class TestSequenceFunctions(unittest.TestCase):
         
     def test_simple_tokenize(self):
         self.assertEqual(self.tokenized, parser.tokenize(self.input_string))
-
-    def test_simple_parenthesize(self):
-        self.assertEqual(self.parenthesized, parser.parenthesize(parser.tokenize(self.input_string)))
     
     def test_literal_categorize(self):
         self.assertEquals(self.categorized_literal, parser.categorize(self.input_token_literal))
@@ -36,7 +33,7 @@ class TestSequenceFunctions(unittest.TestCase):
         self.assertEquals(self.categorized_identifier, parser.categorize(self.input_token_identifier))
         
     def test_parse(self):
-        self.assertEquals(self.parenthesized, parser.parse(self.input_string))
+        self.assertEquals(self.parsed, parser.parse(self.input_string))
         
 if __name__ == '__main__':
     unittest.main()

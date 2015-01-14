@@ -1,11 +1,6 @@
 # Parser for the Schemeling Interpreter
 #
 #
-#
-
-import logging
-
-logging.basicConfig(filename='schemeling.log', level=logging.DEBUG)
 
 def tokenize(string):
     """
@@ -15,9 +10,9 @@ def tokenize(string):
     """
     string = string.replace("(", " ( ")
     string = string.replace(")", " ) ")
-    string = string.split()
+    token_list = string.split()
     
-    return string
+    return token_list
 
 def parenthesize(tokens, array=[]):
     """
@@ -26,22 +21,20 @@ def parenthesize(tokens, array=[]):
     
     tokens --> an array of characters from tokenize()
     """
-    current_token = tokens.pop(0)
+    try:
+        current_token = tokens.pop(0)
+    except IndexError:
+        current_token = None
 
     if current_token == '(':
         array.append(parenthesize(tokens, []))
     elif current_token == ')':
         return array
-    
-    else:
+    elif current_token != None:
         array.append(categorize(current_token))
         parenthesize(tokens, array)
-        logging.debug("Tokens: %s\nArray> %s\nCurrent Token: %s\n----" % (tokens, array, current_token))
-        
-        
+    
     return array
-    
-    
     
 def categorize(token):
     """
@@ -53,15 +46,21 @@ def categorize(token):
     
     if token in identifiers_list:
         return {'type':'identifier', 'value':token}
-    
     else:
         return {'type':'literal', 'value':token}
     
 def parse(lisp_string):
     """
     Just a wrapper for tokenize() and subsequent parenthesize()
-    """
-    return parenthesize(tokenize(lisp_string))
     
+    If the string passed to the parser is empty, then 
+    """
+    if lisp_string == '':
+        return
+    else:
+        return parenthesize(tokenize(lisp_string)).pop()
+        
 if __name__ == "__main__":
-    print parenthesize(tokenize("()"))
+    pass
+    
+    
