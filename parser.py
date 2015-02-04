@@ -1,7 +1,7 @@
 # Parser for the Schemeling Interpreter
 #
 # Authors: Keyan Pishdadian and David Gomez Urquiza
-
+import operator
 
 def tokenize(string):
     """
@@ -47,13 +47,11 @@ def categorize(token):
     token --> a single, non-parenthesis, token from the array passed to
     parenthesize()
     """
-    identifiers_list = ['lambda', '+', '-', '/', '*']
 
-    if token in identifiers_list:
+    try:
+        return {'type': 'literal', 'value': int(token)}
+    except:
         return {'type': 'identifier', 'value': token}
-    else:
-        return {'type': 'literal', 'value': token}
-
 
 def parse(lisp_string):
     """
@@ -64,6 +62,38 @@ def parse(lisp_string):
     else:
         return parenthesize(tokenize(lisp_string)).pop()
 
+def scheme_eval(ast, environment=None):
+    if type(ast) == list:
+        if ast[0]['type'] == 'identifier':
+            if ast[0]['value'] == '+':
+                numbers = [scheme_eval(number, environment) for number in ast[1:]]
+                return sum(numbers)
+            if ast[0]['value'] == '*':
+                numbers = [scheme_eval(number, environment) for number in ast[1:]]
+                return reduce(operator.mul, numbers)
+
+    else:
+        if ast['type'] == 'identifier':
+            return lookup(ast['value'], environment)
+        if ast['type'] == 'literal':
+            return ast['value']
+
+def lookup(variable, environment):
+    if environment == None:
+        raise SyntaxError
+    elif environment.entries.has_key(variable):
+        return environment.entries[variable]
+    else:
+        return lookup(variable, environment.parent)
+
+class Environment(object):
+    def __init__(self, entries, parent=None):
+        self.parent = parent
+        self.entries = entries
 
 if __name__ == "__main__":
-    print parse("((lambda (x) x) 'Lisp'")
+    print parse("((lambda (x) x) 'Lisp')")
+    print scheme_eval(parse("(+ 1 2 3 4)"))
+    print scheme_eval(parse("(+ 1 (+ 2 3 4))"))
+    print scheme_eval(parse("(* 2 (+ 2 3 4))"))
+    print scheme_eval(parse("(+ 1 x)"), Environment({'x': 5}))
