@@ -2,6 +2,7 @@
 #
 # Authors: Keyan Pishdadian and David Gomez Urquiza
 import operator
+import functools
 
 def tokenize(string):
     """
@@ -70,7 +71,7 @@ def scheme_eval(ast, environment=None):
                 return sum(numbers)
             if ast[0]['value'] == '*':
                 numbers = [scheme_eval(number, environment) for number in ast[1:]]
-                return reduce(operator.mul, numbers)
+                return functools.reduce(operator.mul, numbers)
 
     else:
         if ast['type'] == 'identifier':
@@ -81,7 +82,7 @@ def scheme_eval(ast, environment=None):
 def lookup(variable, environment):
     if environment == None:
         raise SyntaxError
-    elif environment.entries.has_key(variable):
+    elif variable in environment.entries:
         return environment.entries[variable]
     else:
         return lookup(variable, environment.parent)
@@ -92,8 +93,8 @@ class Environment(object):
         self.entries = entries
 
 if __name__ == "__main__":
-    print parse("((lambda (x) x) 'Lisp')")
-    print scheme_eval(parse("(+ 1 2 3 4)"))
-    print scheme_eval(parse("(+ 1 (+ 2 3 4))"))
-    print scheme_eval(parse("(* 2 (+ 2 3 4))"))
-    print scheme_eval(parse("(+ 1 x)"), Environment({'x': 5}))
+    print(parse("((lambda (x) x) 'Lisp')"))
+    print(scheme_eval(parse("(+ 1 2 3 4)")))
+    print(scheme_eval(parse("(+ 1 (+ 2 3 4))")))
+    print(scheme_eval(parse("(* 2 (+ 2 3 4))")))
+    print(scheme_eval(parse("(+ 1 x)"), Environment({'x': 5})))
